@@ -3,38 +3,68 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\Post;
 class PostsController extends Controller
 {
-  
-  private  $posts = [
-        ["id" => 1, "title" => "Post 1", "content" => "Content 1"],
-        ["id" => 2, "title" => "Post 2", "content" => "Content 2"],
-        ["id" => 3, "title" => "Post 3", "content" => "Content 3"],
-        ["id" => 4, "title" => "Post 4", "content" => "Content 4"],
-    ];
+    public function index()
+    {
+        $posts = Post::all();
+        return view('listofposts', ['posts' => $posts]);
+    }
+    
 
-    public function showallposts() {
-        return view('allposts', ['posts' => $this->posts]);
-    }
+
       
-    public function showpost($id) {
-        // Find the Post with the given ID in the $posts array
-        $post = null;
-        foreach ($this->posts as $p) {
-            if ($p['id'] == $id) {
-                $post = $p;
-                break;
-            }
+    public function showpost($slug)
+    {
+        // Retrieve the post based on the slug
+        $post = Post::where('slug', $slug)->first(); // Assuming you have an Eloquent model for posts named "Post"
+    
+        // Check if the post exists
+        if (!$post) {
+            abort(404); // Or handle the case when the post is not found
         }
     
-        // If the Post with the given ID is found, pass the Post data to the view
-        if ($post) {
-            return view('showpost', ['post' => $post]);
-        }
-    
-        // If the Post with the given ID is not found, return a 404 response
-        abort(404);
+        // Pass the post data to the view
+        return view('showpost', ['post' => $post]);
+    }
+
+    public function destroy($id)
+    {
+        
+        $post = Post::find($id);
+        
+        $post->delete();
+        // return redirect()->route('posts.index')->with('success', 'Post deleted successfully');
+        return to_route ('posts.index');
     }
     
+    // function to create post
+    public function store(Request $request)
+{
+    // Validate the form data
+    $request->validate([
+        'title' => 'required',
+        'body' => 'required',
+        'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Example validation for the image field
+    ]);
+
+    // Handle the image file upload if provided
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('postimages', 'public');
+    } else {
+        $imagePath = null;
+    }
+
+    // Create a new post
+    Post::create([
+        'title' => $request->input('title'),
+        'body' => $request->input('body'),
+        'image' => $imagePath,
+       
+    ]);
+
+    return redirect()->route('posts.index')->with('success', 'Post created successfully.');
+
+}
 }
