@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\storeCategoryController;
+use App\Http\Requests\updatCategoryController;
+
 use App\Models\Category;
 class CategoryController extends Controller
 {
@@ -25,8 +28,9 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(storeCategoryController $request)
     {
+      
         if ($request->hasFile('logo')) {
             $logoPath = $request->file('logo')->store('logocategories', 'public');
         } else {
@@ -53,7 +57,7 @@ class CategoryController extends Controller
     }
     /** Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(updatCategoryController $request, string $id)
     {
         $category = Category::find($id);
         if ($request->hasFile('logo')) {

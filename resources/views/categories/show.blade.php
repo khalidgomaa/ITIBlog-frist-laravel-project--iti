@@ -59,36 +59,26 @@
                 @method("put")
                 @csrf
                 <div class="modal-body"> 
-     @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div> 
-    @endif 
-     <div class="form-group">
-        <label for="name">name</label>
-        <input type="text" name="name" id="name" value="{{ old('name', $category->name) }}" class="form-control">
-        @error("name")
-            <div class="text-danger">
-                {{ $message }}
-            </div>
-        @enderror
-    </div>
   
+    
     <div class="form-group">
-        <label for="logo">logo</label>
-        <input type="file" name="logo" id="logo" class="form-control">
-        @error("logo")
-            <div class="text-danger">
-                {{ $message }}
-            </div>
-        @enderror
-    </div>
+    <label for="name">Name</label>
+    <input type="text" name="name" id="name" value="{{ old('name', $category->name) }}" class="form-control">
+    @error('name')
+        <div class="text-danger">{{ $message }}</div>
+    @enderror
+</div>
+
+<div class="form-group">
+    <label for="logo">Logo</label>
+    <input type="file" name="logo" id="logo" class="form-control">
+    @error('logo')
+        <div class="text-danger">{{ $message }}</div>
+    @enderror
+</div>
+
     @if ($category->logo)
-        <img src="{{ asset('storage/' . $category->logo) }}" alt="category logo">
+    <img src="{{ asset('storage/' . $category->logo) }}" alt="Category Logo" width="200" height="200">
     @endif
 </div>
                 <div class="modal-footer">
