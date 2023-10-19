@@ -1,9 +1,23 @@
 @extends("navbar")
 @section('content')
 
-<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPostModal">Create New Post</button>
+<style>
+    /* Style to make all images the same width and height */
+    .card-img-top {
+        object-fit: cover; /* This will make sure the image covers the entire space, cropping if needed */
+        height: 100%; /* Set the desired image height */
+        max-width: 100%; /* Ensure the image doesn't exceed its container's width */
+    }
+    
+    .card {
+        max-width: 500px; /* Set the maximum card width */
+    }
+</style>
 
-<!-- Add this modal at the end of your view.blade.php file -->
+
+
+
+<!--  this modal for creating post-->
 <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -14,35 +28,63 @@
             <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
+                    <!-- @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif -->
                     <div class="form-group">
                         <label for="title">Title</label>
-                        <input type="text" name="title" id="title" class="form-control" required>
+                        <input type="text" name="title" id="title" value="{{old('title')}}" class="form-control">
+                        @error("title")
+                        <div class="text-danger">
+                        {{$message}}
+                        </div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="body">Body</label>
-                        <textarea name="body" id="body" class="form-control" rows="5" required></textarea>
+                        <textarea name="body" id="body"value="{{old('body')}}" class="form-control" rows="5"></textarea>
+                        @error("body")
+                        <div class="text-danger">
+                        {{$message}}
+                        </div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="image">Image</label>
-                        <input type="file" name="image" id="image" class="form-control">
+                        <input type="file" name="image"value="{{old('image')}}"  id="image" class="form-control">
+                        @error("image")
+                        <div class="text-danger">
+                        {{$message}}
+                        </div>
+                        @enderror
                     </div>
                 </div>
+               
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary"> Post</button>
+                    <button type="submit" class="btn btn-primary">Post</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<div class="container">
+
+<div class="container my-10">
+<button class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#createPostModal">Create New Post</button>
+
     <div class="text-center my-4">
         <h1 class="display-4">Posts</h1>
     </div>
+    @foreach ($posts as $post)
     <div class="row">
-        @foreach ($posts as $post)
-        <div class="col-md-6 mb-4">
+        <div class="col-md-6 mx-auto">
             <div class="card">
                 <img src="{{ asset('storage/' . $post->image) }}" class="card-img-top img-fluid" alt="{{ $post->title }}">
                 <div class="card-body">
@@ -52,11 +94,13 @@
                 <div class="card-footer">
                     <small class="text-muted">Created at: {{ $post->created_at }}</small><br>
                     <small class="text-muted">Last updated: {{ $post->updated_at }}</small>
+                    
                     <a href="{{ route('showpost', $post->slug) }}" class="btn btn-primary float-end">Show Post</a>
                 </div>
             </div>
         </div>
-        @endforeach
     </div>
+    @endforeach
+    {{ $posts->links() }} <!-- Display pagination links -->
 </div>
 @endsection
