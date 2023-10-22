@@ -8,7 +8,10 @@
         <div class="card-body">
             <h5 class="card-title">{{ $post->title }}</h5>
             <p class="card-text">{{ $post->body }}</p>
+            <small class="text-muted"><a href="{{ route('categories.show',$post->category->id) }}">Category: {{ $post->category->name }}</a></small><br>
+
         </div>
+        
         <div class="card-footer">
             <small class="text-muted">Created at: {{ $post->created_at }}</small><br>
             <small class="text-muted">Last updated: {{ $post->updated_at }}</small>
@@ -97,6 +100,16 @@
             </div>
         @enderror
     </div>
+    <div class="form-group">
+
+        <select class="form-select" name="category_id" aria-label="Default select example">
+            <option selected>select category this select menu</option>
+            @foreach ($categories as $category)
+                <option value="{{ $category->id }}">{{ $category->name }}</option>
+            @endforeach
+        </select>
+
+                        </div>
     <div class="form-group">
         <label for="image">Image</label>
         <input type="file" name="image" id="image" class="form-control">

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\api\postsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+
+// Route::get('/listofposts', [PostsController::class, 'index']);
+
+// Route::get('/listofposts/{post}', [postsController::class, 'show']);
+Route::apiResource('/listofposts', postsController::class);
+
+

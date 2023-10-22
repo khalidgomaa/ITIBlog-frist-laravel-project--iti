@@ -48,13 +48,23 @@
                     </div>
                     <div class="form-group">
                         <label for="body">Body</label>
-                        <textarea name="body" id="body"value="{{old('body')}}" class="form-control" rows="5"></textarea>
+                        <textarea name="body" id="body" value="{{old('body')}}" class="form-control" rows="5"></textarea>
                         @error("body")
                         <div class="text-danger">
                         {{$message}}
                         </div>
                         @enderror
                     </div>
+                    <div class="form-group">
+
+                    <select class="form-select" name="category_id" aria-label="Default select example">
+                        <option selected>select category this select menu</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+
+                                            </div>
                     <div class="form-group">
                         <label for="image">Image</label>
                         <input type="file" name="image"value="{{old('image')}}"  id="image" class="form-control">
@@ -90,6 +100,7 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ $post->title }}</h5>
                     <p class="card-text">{{ $post->body }}</p>
+                    <small class="text-muted">Category: {{ $post->category->name }}</small><br>
                 </div>
                 <div class="card-footer">
                     <small class="text-muted">Created at: {{ $post->created_at }}</small><br>

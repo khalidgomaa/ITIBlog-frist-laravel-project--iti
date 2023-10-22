@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\Category;
 
 class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'body', 'image', 'version', 'slug'];
+    protected $fillable = ['title', 'body', 'image', 'version', 'slug','category_id'];
 
     protected static function boot()
     {
@@ -28,5 +29,9 @@ class Post extends Model
                 $count++;
             }
         });
+    }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

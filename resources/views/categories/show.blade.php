@@ -1,22 +1,39 @@
 @extends("navbar")
 @section('content')
 <div class="container">
-
     <div class="row">
-       
-        <div class="col-md-4">
+        <!-- Category Section -->
+        <div class="col-md-6">
             <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-name text-center">{{ $category->name }}</h5>
                     <img src="{{ asset('storage/' . $category->logo) }}" class="card-img-top" alt="{{ $category->name }} logo">
                     <button data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-danger mt-3">Delete</button>
-    <button data-bs-toggle="modal" data-bs-target="#editcategoryModal" class="btn btn-primary mt-3">Edit</button>
+                    <button data-bs-toggle="modal" data-bs-target="#editcategoryModal" class="btn btn-primary mt-3">Edit</button>
                 </div>
             </div>
         </div>
 
-    </div>
-  
+        <!-- Post Section -->
+        <div class="col-md-6">
+    <h3>Posts of {{ $category->name }}</h3>
+    @foreach ($category->posts as $post)
+        <div class="card mb-3">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{{ asset('storage/' . $post->image) }}" class="card-img" alt="Post Image">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $post->title }}</h5>
+                        <p class="card-text">{{ $post->body }}</p>
+                        <a href="{{ route('showpost', $post->slug) }}" class="btn btn-primary">View Post</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div>
     
 
      <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

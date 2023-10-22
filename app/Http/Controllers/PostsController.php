@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Category;
 class PostsController extends Controller
 {
     // public function index()
@@ -14,14 +15,16 @@ class PostsController extends Controller
     
     public function index()
     {
+        $categories=Category::all();
         $posts = Post::orderBy('created_at', 'desc')->paginate(6); // Retrieve 5 posts per page
-        return view('listofposts', ['posts' => $posts]);
+        return view('listofposts', ['posts' => $posts,'categories'=>$categories]);
     }
 
 
       
     public function showpost($slug)
        {
+        $categories=Category::all();
         // Retrieve the post based on the slug
         $post = Post::where('slug', $slug)->first(); // Assuming you have an Eloquent model for posts named "Post"
 
@@ -31,7 +34,7 @@ class PostsController extends Controller
                     }
     
         // Pass the post data to the view
-        return view('showpost', ['post' => $post]);
+        return view('showpost', ['post' => $post,'categories' => $categories]);
     }
 // function to delete post
     public function destroy($id)
@@ -51,6 +54,7 @@ class PostsController extends Controller
     $request->validate([
         'title' => 'required|min:3',
         'body' => 'required |min:10',
+        'category_id' => 'required',
         'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Example validation for the image field
       ],
       [
@@ -65,7 +69,7 @@ class PostsController extends Controller
         
        
       ]
-    
+
     );
 
     // Handle the image file upload if provided
@@ -74,11 +78,13 @@ class PostsController extends Controller
     } else {
         $imagePath = null;
     }
+// dd($request);
 
     // Create a new post
     Post::create([
         'title' => $request->input('title'),
         'body' => $request->input('body'),
+        'category_id' => $request->input('category_id'),
         'image' => $imagePath,
        
     ]);
@@ -89,11 +95,11 @@ class PostsController extends Controller
 
 public function update(Request $request, $slug){
 
-    
   // Validate the form data
   $request->validate([
     'title' => 'required|min:3',
     'body' => 'required |min:10',
+    'category_id' => 'required',
     'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Example validation for the image field
   ],
   [
@@ -118,9 +124,10 @@ public function update(Request $request, $slug){
 }
 // Update an existing post
 $post = Post::where('slug', $slug)->first(); 
-$post->pduate([
+$post->update([
     'title'=>$request->input('title'),
     'body'=>$request->input('body'),
+    'category_id'=>$request->input('category_id'),
     'image'=>$imagePath,
     ]);
     return redirect()->route('showpost', ['slug' => $slug])->with('success', 'Post updated successfully.');
