@@ -2,20 +2,32 @@
 @section('content')
 
 <style>
+    /* Add custom CSS for styling pagination */
+    .pagination {
+        justify-content: center;
+    }
+
     /* Style to make all images the same width and height */
     .card-img-top {
-        object-fit: cover; /* This will make sure the image covers the entire space, cropping if needed */
-        height: 100%; /* Set the desired image height */
-        max-width: 100%; /* Ensure the image doesn't exceed its container's width */
+        object-fit: cover;
+        height: 100%;
+        max-width: 100%;
     }
-    
+
     .card {
-        max-width: 500px; /* Set the maximum card width */
+        max-width: 300px; /* Adjust card width to fit three cards in one row */
+    }
+ 
+    /* Customize the pagination links */
+    .pagination {
+        justify-content: center;
+    }
+
+    .pagination .page-item .page-link {
+        font-size: 14px; /* Adjust the font size to your preference */
+        padding: 5px 10px; /* Adjust the padding to your preference */
     }
 </style>
-
-
-
 
 <!--  this modal for creating post-->
 <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
@@ -28,21 +40,12 @@
             <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
-                    <!-- @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif -->
                     <div class="form-group">
                         <label for="title">Title</label>
                         <input type="text" name="title" id="title" value="{{old('title')}}" class="form-control">
                         @error("title")
                         <div class="text-danger">
-                        {{$message}}
+                            {{$message}}
                         </div>
                         @enderror
                     </div>
@@ -51,31 +54,29 @@
                         <textarea name="body" id="body" value="{{old('body')}}" class="form-control" rows="5"></textarea>
                         @error("body")
                         <div class="text-danger">
-                        {{$message}}
+                            {{$message}}
                         </div>
                         @enderror
                     </div>
                     <div class="form-group">
-
-                    <select class="form-select" name="category_id" aria-label="Default select example">
-                        <option selected>select category this select menu</option>
-                        @foreach ($categories as $category)
+                        <select class="form-select" name="category_id" aria-label="Default select example">
+                            <option selected>select category this select menu</option>
+                            @foreach ($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
-                        @endforeach
-                    </select>
-
-                                            </div>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label for="image">Image</label>
-                        <input type="file" name="image"value="{{old('image')}}"  id="image" class="form-control">
+                        <input type="file" name="image" value="{{old('image')}}" id="image" class="form-control">
                         @error("image")
                         <div class="text-danger">
-                        {{$message}}
+                            {{$message}}
                         </div>
                         @enderror
                     </div>
                 </div>
-               
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Post</button>
@@ -85,16 +86,16 @@
     </div>
 </div>
 
-
 <div class="container my-10">
-<button class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#createPostModal">Create New Post</button>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPostModal">Create New Post</button>
 
     <div class="text-center my-4">
         <h1 class="display-4">Posts</h1>
     </div>
-    @foreach ($posts as $post)
+
     <div class="row">
-        <div class="col-md-6 mx-auto">
+        @foreach ($posts as $post)
+        <div class="col-md-4 mb-4"> <!-- Use col-md-4 to display three posts in one row on medium screens and above -->
             <div class="card">
                 <img src="{{ asset('storage/' . $post->image) }}" class="card-img-top img-fluid" alt="{{ $post->title }}">
                 <div class="card-body">
@@ -105,13 +106,14 @@
                 <div class="card-footer">
                     <small class="text-muted">Created at: {{ $post->created_at }}</small><br>
                     <small class="text-muted">Last updated: {{ $post->updated_at }}</small>
-                    
                     <a href="{{ route('showpost', $post->slug) }}" class="btn btn-primary float-end">Show Post</a>
                 </div>
             </div>
         </div>
+        @endforeach
     </div>
-    @endforeach
-    {{ $posts->links() }} <!-- Display pagination links -->
+
+    {{ $posts->links('pagination.custom') }}
+ <!-- Display pagination links with the default Bootstrap styling -->
 </div>
 @endsection
