@@ -1,4 +1,4 @@
-@extends("navbar")
+@extends('layouts.app')
 @section('content')
 <div class="container">
     <div class="row">
@@ -7,6 +7,8 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-name text-center">{{ $category->name }}</h5>
+                    <small class="text-muted"><a href="#">user: {{ $category->user->name }}</a></small>
+
                     <img src="{{ asset('storage/' . $category->logo) }}" class="card-img-top" alt="{{ $category->name }} logo">
                     <button data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-danger mt-3">Delete</button>
                     <button data-bs-toggle="modal" data-bs-target="#editcategoryModal" class="btn btn-primary mt-3">Edit</button>
@@ -35,7 +37,7 @@
     @endforeach
 </div>
     
-
+<!-- model of delete -->
      <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

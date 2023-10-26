@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use App\Models\Category;
+use App\Models\User;
 
 class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'body', 'image', 'version', 'slug','category_id'];
+    protected $fillable = ['title', 'body', 'image', 'version', 'slug','category_id','user_id'];
 
     protected static function boot()
     {
@@ -34,4 +35,9 @@ class Post extends Model
     {
         return $this->belongsTo(Category::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(user::class);
+    }
 }
+

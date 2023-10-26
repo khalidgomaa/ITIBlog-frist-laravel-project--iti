@@ -114,7 +114,15 @@ class postsController extends Controller
     public function destroy($id)
     {
         $post = Post::find($id);
-
+        if ($post->image) {
+            // Construct the full path to the image using the 'public' disk
+            $imagePath = public_path('storage/' . $post->image);
+    
+            // Check if the image file exists before attempting to delete
+            if (file_exists($imagePath)) {
+                // Delete the image file
+                unlink($imagePath);
+            }}
         $post->delete();
         
         $posts=Post::all();

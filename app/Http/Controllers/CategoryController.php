@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\storeCategoryController;
 use App\Http\Requests\updatCategoryController;
-
+use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
 class CategoryController extends Controller
 {
@@ -40,6 +40,7 @@ class CategoryController extends Controller
         Category::create([
             'name' => $request->input('name'),
             'logo' => $logoPath,
+            'user_id'=>Auth::id()
         ]);
         return redirect()->route('categories.index')->with('success', 'Post Category successfully.');
 
@@ -77,7 +78,15 @@ class CategoryController extends Controller
     {
         
         $category = Category::find($id);
-        
+        if ($category->logo) {
+            // Construct the full path to the image using the 'public' disk
+            $imagePath = public_path('storage/' . $category->logo);
+    
+            // Check if the image file exists before attempting to delete
+            if (file_exists($imagePath)) {
+                // Delete the image file
+                unlink($imagePath);
+            }}
         $category->delete();
         return redirect()->route('categories.index');
 

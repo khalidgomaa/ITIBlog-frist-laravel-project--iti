@@ -4,26 +4,30 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Category;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
 class PostsController extends Controller
 {
-    // public function index()
-    // {
-    //     // $posts = Post::all();
-    //     $posts = Post::paginate(5); // Retrieve 5 posts per page
-    //     return view('listofposts', ['posts' => $posts]);
-    // }
+//    function __construct(){
+//     // $this->middleware('auth')->only(["store","showpost"]);
+//     $this->middleware('auth')->except(["index","store"]);
+//    }
     
     public function index()
     {
-        $categories=Category::all();
+    
+    $categories=Category::all();
+    $users=User::all();
         $posts = Post::orderBy('created_at', 'desc')->paginate(6); // Retrieve 5 posts per page
-        return view('listofposts', ['posts' => $posts,'categories'=>$categories]);
+        return view('posts.listofposts', ['posts' => $posts,'categories'=>$categories,'users'=>$users]);
     }
 
 
       
     public function showpost($slug)
        {
+        $users=User::all();
         $categories=Category::all();
         // Retrieve the post based on the slug
         $post = Post::where('slug', $slug)->first(); // Assuming you have an Eloquent model for posts named "Post"
@@ -34,17 +38,26 @@ class PostsController extends Controller
                     }
     
         // Pass the post data to the view
-        return view('showpost', ['post' => $post,'categories' => $categories]);
+        return view('posts.showpost', ['post' => $post,'categories' => $categories,'users'=>$users]);
     }
 // function to delete post
     public function destroy($id)
     {
-        
+        if (Auth::user()->id === $post->user_id) {
         $post = Post::find($id);
-        
+        if ($post->image) {
+            // Construct the full path to the image using the 'public' disk
+            $imagePath = public_path('storage/' . $post->image);
+    
+            // Check if the image file exists before attempting to delete
+            if (file_exists($imagePath)) {
+                // Delete the image file
+                unlink($imagePath);
+            }
+        }
         $post->delete();
         // return redirect()->route('posts.index')->with('success', 'Post deleted successfully');
-        return to_route ('posts.index');
+        return to_route ('posts.index');}
     }
     
     // function to create post
@@ -86,6 +99,7 @@ class PostsController extends Controller
         'body' => $request->input('body'),
         'category_id' => $request->input('category_id'),
         'image' => $imagePath,
+        'user_id'=>Auth::id()
        
     ]);
 
@@ -94,8 +108,16 @@ class PostsController extends Controller
 }
 
 public function update(Request $request, $slug){
+    $post = Post::where('slug', $slug)->first(); 
 
-  // Validate the form data
+    if (!$post) {
+        // Handle the case where the post is not found
+        return redirect()->route('posts.index')->with('error', 'Post not found');
+    }
+
+    if (Auth::user()->id !== $post->user_id) {
+abort(403)   ;
+ }
   $request->validate([
     'title' => 'required|min:3',
     'body' => 'required |min:10',
@@ -131,5 +153,4 @@ $post->update([
     'image'=>$imagePath,
     ]);
     return redirect()->route('showpost', ['slug' => $slug])->with('success', 'Post updated successfully.');
-} 
-}
+} }

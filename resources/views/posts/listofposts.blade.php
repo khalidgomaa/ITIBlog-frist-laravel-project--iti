@@ -1,4 +1,4 @@
-@extends("navbar")
+@extends('layouts.app')
 @section('content')
 
 <style>
@@ -85,7 +85,7 @@
         </div>
     </div>
 </div>
-
+ <!-- show the posts -->
 <div class="container my-10">
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPostModal">Create New Post</button>
 
@@ -102,6 +102,7 @@
                     <h5 class="card-title">{{ $post->title }}</h5>
                     <p class="card-text">{{ $post->body }}</p>
                     <small class="text-muted">Category: {{ $post->category->name }}</small><br>
+                    <small class="text-muted">created by: {{ $post->user->name }}</small><br>
                 </div>
                 <div class="card-footer">
                     <small class="text-muted">Created at: {{ $post->created_at }}</small><br>
@@ -113,7 +114,10 @@
         @endforeach
     </div>
 
-    {{ $posts->links('pagination.custom') }}
  <!-- Display pagination links with the default Bootstrap styling -->
+</div>
+<!-- Display pagination links -->
+<div class="d-flex justify-content-center">
+    {{ $posts->links() }}
 </div>
 @endsection

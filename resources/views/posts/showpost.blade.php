@@ -1,4 +1,4 @@
-@extends("navbar")
+@extends('layouts.app')
 
 @section('content')
 <div class="container">
@@ -9,6 +9,7 @@
             <h5 class="card-title">{{ $post->title }}</h5>
             <p class="card-text">{{ $post->body }}</p>
             <small class="text-muted"><a href="{{ route('categories.show',$post->category->id) }}">Category: {{ $post->category->name }}</a></small><br>
+            <small class="text-muted"><a href="{{ route('users.show',$post->user->id) }}">user: {{ $post->user->name }}</a></small><br>
 
         </div>
         
@@ -19,8 +20,10 @@
     </div>
 
     <a href="{{ route('posts.index') }}" class="btn btn-primary mt-3">Return to All Posts</a>
-    <button data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-danger mt-3">Delete</button>
-    <button data-bs-toggle="modal" data-bs-target="#editPostModal" class="btn btn-primary mt-3">Edit</button>
+    @if (auth()->check() && $post->user_id === auth()->user()->id)
+        <button data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-danger mt-3">Delete</button>
+        <button data-bs-toggle="modal" data-bs-target="#editPostModal" class="btn btn-primary mt-3">Edit</button>
+    @endif
 </div>
 
 <style>
@@ -120,7 +123,7 @@
         @enderror
     </div>
     @if ($post->image)
-        <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image">
+        <img src="{{ asset('storage/' . $post->image) }}" width="200" height="200" alt="Post Image">
     @endif
 </div>
                 <div class="modal-footer">

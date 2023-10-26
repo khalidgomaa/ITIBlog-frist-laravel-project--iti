@@ -1,4 +1,4 @@
-@extends("navbar")
+@extends('layouts.app')
 @section('content')
 <div class="container">
     <a href="{{ route('categories.create') }}" class="btn btn-primary">Create New Category</a>
